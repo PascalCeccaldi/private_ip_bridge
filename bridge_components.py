@@ -31,10 +31,13 @@ def auto_commit(hips: str, branch: str,
     g = git.Git(repo_path)
     if not check_branch(branch, g, force):
         return 'branch {} does not exist'.format(branch)
+    repo = git.Repo(repo_path)
+    for remote in repo.remotes:
+        remote.fetch()
     commit_message = 'Hashed IPs updated from {}'.format(computer_name)
     g.add(fname)
     g.commit(m=commit_message)
-    repo = git.Repo(repo_path)
+
     repo.git.push('--set-upstream', 'origin', branch)
     return commit_message
 
@@ -61,6 +64,9 @@ def decode_computer_ips(key_path: str, branch: str,
     if not check_branch(branch, g, force):
         return 'branch {} does not exist'.format(branch)
     g.pull('origin', branch)
+    repo = git.Repo(repo_path)
+    for remote in repo.remotes:
+        remote.fetch()
     fname = computer_name + '.txt'
     if not os.path.isfile(fname):
         return '{} does not exist.'.format(computer_name)

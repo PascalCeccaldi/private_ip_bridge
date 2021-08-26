@@ -32,8 +32,8 @@ def auto_commit(hips: str, branch: str,
     if not check_branch(branch, g, force):
         return 'branch {} does not exist'.format(branch)
     commit_message = 'Hashed IPs updated from {}'.format(computer_name)
-    #g.add(fname)
-    #g.commit(m=commit_message)
+    g.add(fname)
+    g.commit(m=commit_message)
     repo = git.Repo(repo_path)
     repo.git.push('--set-upstream', 'origin', branch)
     return commit_message

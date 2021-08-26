@@ -96,7 +96,6 @@ def auto_commit(hips: list, branch: str,
     if not exists:
         return 'branch {} does not exist'.format(branch)
     if exists > 1:
-
         g.checkout(branch)
         o = repo.remotes.origin
         o.pull(branch)
@@ -119,14 +118,19 @@ def decode_computer_ips(key_path: str, branch: str,
 
     g = git.Git(repo_path)
     repo = git.Repo(repo_path)
+    
+
     for remote in repo.remotes:
-        remote.fetch()
-    exists = check_branch(branch, g, force)
+        exists =  check_branch(branch, remote, force)
     if not exists:
         return 'branch {} does not exist'.format(branch)
     if exists > 1:
+        g.checkout(branch)
         o = repo.remotes.origin
         o.pull(branch)
+    else:
+        current = repo.create_head(branch)
+        current.checkout()
     fname = computer_name + '.txt'
     return read_file(fname, key_path)
 

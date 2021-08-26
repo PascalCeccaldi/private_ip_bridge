@@ -5,6 +5,7 @@ import hmac
 import time
 import socket
 import datetime
+from git.objects import commit
 import requests
 import os.path
 
@@ -20,16 +21,25 @@ def fetch_ips(current_ips):
     return global_ip + local_ip
 
 
-def auto_commit(hips: str, repo: git.Repo, computer_name: str):
+def auto_commit(hips: str, branch: str,
+                repo_path: str, computer_name: str,
+                force=False):
     fname = computer_name + '.txt'
     with open(fname, 'w+') as f:
         f.write(str(hips))
     f.close()
+    g = git.Git(repo_path)
+    if not check_branch(branch, g, force):
+        return 'branch {} does not exist'.format(branch)
     commit_message = 'Hashed IPs updated from {}'.format(computer_name)
-    repo.index.add(fname)
-    repo.index.commit(commit_message)
+    g.add(fname)
+    g.commit(m=commit_message)
+    g.push()
+    #repo.index.add(fname)
+    #repo.index.commit(commit_message)
     #origin = repo.remote('origin')
     #origin.push()
+    return commit_message
 
 def check_branch(branch: str, g: git.Git, force: bool = False):
     all_branches = g.branch("--all").split()
@@ -110,6 +120,7 @@ def ip_decoder(hashes, key_path):
 def ip_listener(freq: int = 60,
                 oneshot: bool = False,
                 key_path: str = '',
+                branch: str = 'tmp',
                 repo_path: str = '',
                 computer_name: str = "Al"):
     
@@ -119,8 +130,6 @@ def ip_listener(freq: int = 60,
     
     old_ips = []
     current_ips = []
-    if len(repo_path):
-        repo = git.Repo(repo_path)
     while True:
         current_ips = fetch_ips(current_ips)
         if current_ips != old_ips:
@@ -131,7 +140,8 @@ def ip_listener(freq: int = 60,
             if len(key_path):
                 hashed_ips = hash_ips(current_ips, key_path)
                 if len(repo_path):
-                    auto_commit(hashed_ips, repo, computer_name)
+                    auto_commit(hashed_ips, branch,
+                                repo_path, computer_name)
             old_ips = current_ips
             if oneshot:
                 return hashed_ips if len(key_path) else current_ips

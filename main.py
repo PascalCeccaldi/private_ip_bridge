@@ -31,13 +31,6 @@ def hips_push():
                           force=force))
     return render_template('push_local_ips.html')
 
-@app.route('/continuous_hips_push', methods=['POST'])
-def continuous_hips_push():
-    ips = str(ip_listener(60, key_path=key_p, branch=your_branch,
-                          repo_path=repo_p, computer_name=computer_n,
-                          force=force))
-    return render_template('push_local_ips.html')
-
 @app.route('/access_ips', methods=['POST'])
 def read_remote_ips(computer_name: str = 'Al'):
     ips = str(decode_computer_ips(key_path=key_p,
@@ -70,6 +63,10 @@ if __name__ == '__main__':
                         default='Al')
     parser.add_argument('--force',type=bool,
                         default=False)
+    parser.add_argument('--background',type=bool,
+                        default=False)
+    parser.add_argument('--update-freq',type=int,
+                        default=60)
     args = parser.parse_args()
     
     your_branch = args.your_branch
@@ -77,4 +74,10 @@ if __name__ == '__main__':
     repo_p = args.repository_path
     computer_n = args.computer_name
     force = args.force
-    app.run(host='127.0.0.1', port=8000, debug=True)
+    freq = args.update_freq
+    if args.background:
+        ip_listener(freq, key_path=key_p, branch=your_branch,
+                    repo_path=repo_p, computer_name=computer_n,
+                    force=force, bg=True)
+    else:
+        app.run(host='127.0.0.1', port=8000, debug=True)

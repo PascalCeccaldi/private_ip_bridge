@@ -133,7 +133,8 @@ def ip_listener(freq: int = 60,
                 branch: str = 'tmp',
                 repo_path: str = '',
                 computer_name: str = "Al",
-                force: bool = False):
+                force: bool = False,
+                bg: bool = False):
     
     print('Bot Listening to your ip..')
     print('To quit, press CTRL+C')

@@ -20,11 +20,54 @@ def fetch_ips(current_ips):
     local_ip = socket.gethostbyname(socket.gethostname()).split('.')
     return global_ip + local_ip
 
+def read_paper_list(paper_list: str):
+    paper_list = paper_list.split(', ')
+    new_list = []
+    for item in paper_list:
+        new_list.append(item.split('\'')[1])
+    return new_list
 
-def auto_commit(hips: str, branch: str,
+def ip_decoder(hashes, key_path):
+    ips = []
+    if type(hashes) is str:
+        hashes = read_paper_list(hashes)
+    with open(key_path) as f:
+        public_key = f.read()
+        for h in hashes:
+            for i in range(256):
+                msg = hmac.new(bytes(public_key, encoding='utf8'),
+                               bytes(str(i), encoding='utf8'),
+                               digestmod='sha256')
+                if msg.hexdigest() == h:
+                    break
+            ips.append(str(i))
+    f.close()
+    print(ips)
+    return ips
+
+def read_file(fname: str, key_path: str = ''):
+    if not os.path.isfile(fname):
+        return '{} does not exist.'.format(fname)
+    with open(fname, 'r') as f: 
+        stored_hips = f.read()
+        hips = read_paper_list(stored_hips)
+    f.close()
+    if len(key_path):
+        ips = ip_decoder(hips, key_path)
+        return ips
+    return hips
+
+def check_updates(hips: list, fname: str):
+    if hips == read_file(fname):
+        return True
+    return False
+
+def auto_commit(hips: list, branch: str,
                 repo_path: str, computer_name: str,
                 force=False):
     fname = computer_name + '.txt'
+    if check_updates(hips, fname):
+        return None
     with open(fname, 'w+') as f:
         f.write(str(hips))
     f.close()
@@ -68,23 +111,8 @@ def decode_computer_ips(key_path: str, branch: str,
     for remote in repo.remotes:
         remote.fetch()
     fname = computer_name + '.txt'
-    if not os.path.isfile(fname):
-        return '{} does not exist.'.format(computer_name)
-    with open(fname, 'r') as f: 
-        stored_hips = f.read()
-        hips = read_paper_list(stored_hips)
-        ips = ip_decoder(hips, key_path)
-    f.close()
-    print(ips)
-    return ips
-    
+    return read_file(fname, key_path)
 
-def read_paper_list(paper_list: str):
-    paper_list = paper_list.split(', ')
-    new_list = []
-    for item in paper_list:
-        new_list.append(item.split('\'')[1])
-    return new_list
 
 def hash_ips(ips: str, key_path: str):
     hashes = []
@@ -97,28 +125,7 @@ def hash_ips(ips: str, key_path: str):
             hashes.append(msg.hexdigest())
     f.close()
     print(hashes)
-    return hashes
-
-
-def ip_decoder(hashes, key_path):
-    ips = []
-    if type(hashes) is str:
-        hashes = read_paper_list(hashes)
-    with open(key_path) as f:
-        public_key = f.read()
-        for h in hashes:
-            for i in range(256):
-                msg = hmac.new(bytes(public_key, encoding='utf8'),
-                               bytes(str(i), encoding='utf8'),
-                               digestmod='sha256')
-                if msg.hexdigest() == h:
-                    break
-            ips.append(str(i))
-    f.close()
-    print(ips)
-    return ips
-            
-                
+    return hashes            
 
 def ip_listener(freq: int = 60,
                 oneshot: bool = False,

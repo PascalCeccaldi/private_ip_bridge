@@ -67,19 +67,19 @@ def check_updates(hips: list, fname: str):
     return False
 
 
-def check_branch(branch: str, g: git.Git, force: bool = False):
-    all_branches = g.branch("--all").split()
-    if branch not in all_branches:
+def check_branch(branch: str, remote, force: bool = False):
+    fetch_info = remote.fetch()
+    all_branches = [br.name for br in fetch_info]
+    full_branch = '/'.join([remote.name, branch])
+    if full_branch not in all_branches:
         print('warning: branch {} does not exist'.format(branch))
         if not force:
             print('Last action will be ignored due to warning.')
             print('Please create your branch manually or use -f option')
             print('To force branch creation please use the following:')
             print('python main.py your_branch --force True')
-            return False
-        g.checkout('HEAD', b=branch)
+            return 0
         return 1
-    g.checkout(branch)
     return 2
 
 
@@ -90,15 +90,19 @@ def auto_commit(hips: list, branch: str,
     if check_updates(hips, fname):
         return None
     repo = git.Repo(repo_path)
-    for remote in repo.remotes:
-        remote.fetch()
     g = git.Git(repo_path)
-    exists =  check_branch(branch, g, force)
+    for remote in repo.remotes:
+        exists =  check_branch(branch, remote, force)
     if not exists:
         return 'branch {} does not exist'.format(branch)
     if exists > 1:
+
+        g.checkout(branch)
         o = repo.remotes.origin
         o.pull(branch)
+    else:
+        current = repo.create_head(branch)
+        current.checkout()
     with open(fname, 'w+') as f:
         f.write(str(hips))
     f.close()

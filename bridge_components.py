@@ -67,28 +67,6 @@ def check_updates(hips: list, fname: str):
     return False
 
 
-def auto_commit(hips: list, branch: str,
-                repo_path: str, computer_name: str,
-                force=False):
-    fname = computer_name + '.txt'
-    if check_updates(hips, fname):
-        return None
-    g = git.Git(repo_path)
-    if not check_branch(branch, g, force):
-        return 'branch {} does not exist'.format(branch)
-    repo = git.Repo(repo_path)
-    for remote in repo.remotes:
-        remote.fetch()
-    with open(fname, 'w+') as f:
-        f.write(str(hips))
-    f.close()
-    commit_message = 'Hashed IPs updated from {}'.format(computer_name)
-    g.add(fname)
-    g.commit(m=commit_message)
-
-    repo.git.push('--set-upstream', 'origin', branch)
-    return commit_message
-
 def check_branch(branch: str, g: git.Git, force: bool = False):
     all_branches = g.branch("--all").split()
     if branch not in all_branches:
@@ -104,6 +82,31 @@ def check_branch(branch: str, g: git.Git, force: bool = False):
     return True
 
 
+def auto_commit(hips: list, branch: str,
+                repo_path: str, computer_name: str,
+                force=False):
+    fname = computer_name + '.txt'
+    if check_updates(hips, fname):
+        return None
+    g = git.Git(repo_path)
+    if not check_branch(branch, g, force):
+        return 'branch {} does not exist'.format(branch)
+    repo = git.Repo(repo_path)
+    for remote in repo.remotes:
+        remote.fetch()
+    o = repo.remotes.origin
+    o.pull(branch)
+    with open(fname, 'w+') as f:
+        f.write(str(hips))
+    f.close()
+    commit_message = 'Hashed IPs updated from {}'.format(computer_name)
+    g.add(fname)
+    g.commit(m=commit_message)
+
+    repo.git.push('--set-upstream', 'origin', branch)
+    return commit_message
+
+
 def decode_computer_ips(key_path: str, branch: str,
                         repo_path: str, computer_name: str,
                         force: bool = False):
@@ -111,10 +114,11 @@ def decode_computer_ips(key_path: str, branch: str,
     g = git.Git(repo_path)
     if not check_branch(branch, g, force):
         return 'branch {} does not exist'.format(branch)
-    g.pull('origin', branch)
     repo = git.Repo(repo_path)
     for remote in repo.remotes:
         remote.fetch()
+    o = repo.remotes.origin
+    o.pull(branch)
     fname = computer_name + '.txt'
     return read_file(fname, key_path)
 

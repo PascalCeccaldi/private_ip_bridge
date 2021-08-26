@@ -27,8 +27,8 @@ def auto_commit(hips: str, repo: git.Repo, computer_name: str = "Al"):
     
 
 def decode_computer_ips(key_path: str, repo_path: str, computer_name: str):
-    repo = git.Repo(repo_path)
-    repo.remotes.origin.pull()
+    g = git.Git(repo_path)
+    g.pull('origin','master')
     fname = computer_name + '.txt'
     if not os.path.isfile(fname):
         return '{} does not exist.'.format(computer_name)

@@ -21,9 +21,15 @@ def fetch_ips(current_ips):
 
 
 def auto_commit(hips: str, repo: git.Repo, computer_name: str = "Al"):
-    with open(computer_name + '.txt', 'w') as f:
+    fname = computer_name + '.txt'
+    with open(fname, 'w+') as f:
         f.write(str(hips))
-    f.close()    
+    f.close()
+    commit_message = 'Hashed IPs updated from {}'.format(computer_name)
+    repo.index.add(fname)
+    repo.index.commit(commit_message)
+    #origin = repo.remote('origin')
+    #origin.push()
     
 
 def decode_computer_ips(key_path: str, repo_path: str, computer_name: str):

@@ -5,12 +5,12 @@ from bridge_components import ip_listener, ip_decoder, decode_computer_ips
 
 
 @app.route('/get_ips', methods=['POST'])
-def oneshot_push():
+def get_ips():
     ips = str(ip_listener(1, oneshot=True))
     return render_template('push_local_ips.html', ips=ips)
 
 @app.route('/get_hashed_ips', methods=['POST'])
-def oneshot_hashed_push():
+def get_hashed_ips():
     hips = str(ip_listener(1, oneshot=True, key_path=key_p))
     return render_template('push_local_ips.html', hips=hips)
 
@@ -22,8 +22,13 @@ def decode_hips():
     ips = ip_decoder(hips, key_path=key_p)
     return render_template('push_local_ips.html', ips=ips)
 
-@app.route('/continous_push', methods=['POST'])
-def continuous_hashed_push():
+@app.route('/hips_push', methods=['POST'])
+def hips_push():
+    ips = str(ip_listener(60, oneshot=True, key_path=key_p, repo_path=repo_p))
+    return render_template('push_local_ips.html')
+
+@app.route('/continuous_hips_push', methods=['POST'])
+def continuous_hips_push():
     ips = str(ip_listener(60, key_path=key_p, repo_path=repo_p))
     return render_template('push_local_ips.html')
 

@@ -38,6 +38,7 @@ def continuous_hips_push():
 @app.route('/access_ips', methods=['POST'])
 def read_remote_ips(computer_name: str = 'Al'):
     ips = str(decode_computer_ips(key_path=key_p,
+                                  branch=your_branch,
                                   repo_path=repo_p,
                                   computer_name=computer_n))
     return render_template('remote_access.html', ips=ips)
@@ -57,6 +58,7 @@ def index():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('your_branch', type=str)
     parser.add_argument('--public-key-path', type=str,
                         default="/Users/pascalceccaldi/.ssh/id_rsa_ips.pub")
     parser.add_argument('--repository-path', type=str,
@@ -64,6 +66,8 @@ if __name__ == '__main__':
     parser.add_argument('--computer-name', type=str,
                         default='Al')
     args = parser.parse_args()
+    
+    your_branch = args.your_branch
     key_p = args.public_key_path
     repo_p = args.repository_path
     computer_n = args.computer_name

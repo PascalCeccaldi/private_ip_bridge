@@ -30,11 +30,30 @@ def auto_commit(hips: str, repo: git.Repo, computer_name: str):
     repo.index.commit(commit_message)
     #origin = repo.remote('origin')
     #origin.push()
-    
 
-def decode_computer_ips(key_path: str, repo_path: str, computer_name: str):
+def check_branch(branch: str, g: git.Git, force: bool = False):
+    all_branches = g.branch("--all").split()
+    if branch not in all_branches:
+        print('warning: branch {} does not exist'.format(branch))
+        if not force:
+            print('Last action will be ignored due to warning.')
+            print('Please create your branch manually or use -f option')
+            print('To force branch creation please use the following:')
+            print('python main.py -f your_branch')
+            return False
+        g.checkout('HEAD', b=branch) 
+    g.checkout(branch)
+    return True
+
+
+def decode_computer_ips(key_path: str, branch: str,
+                        repo_path: str, computer_name: str,
+                        force: bool = False):
+
     g = git.Git(repo_path)
-    g.pull('origin','master')
+    if not check_branch(branch, g, force):
+        return 'branch {} does not exist'.format(branch)
+    g.pull('origin', branch)
     fname = computer_name + '.txt'
     if not os.path.isfile(fname):
         return '{} does not exist.'.format(computer_name)

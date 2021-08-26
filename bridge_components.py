@@ -1,4 +1,3 @@
-
 import re
 import git
 import hmac
@@ -8,6 +7,7 @@ import datetime
 from git.objects import commit
 import requests
 import os.path
+
 
 def fetch_ips(current_ips):    
     url = "https://duckduckgo.com?q=what+is+my+ip+address&ia=answer"
@@ -20,12 +20,14 @@ def fetch_ips(current_ips):
     local_ip = socket.gethostbyname(socket.gethostname()).split('.')
     return global_ip + local_ip
 
+
 def read_paper_list(paper_list: str):
     paper_list = paper_list.split(', ')
     new_list = []
     for item in paper_list:
         new_list.append(item.split('\'')[1])
     return new_list
+
 
 def ip_decoder(hashes, key_path):
     ips = []
@@ -45,6 +47,7 @@ def ip_decoder(hashes, key_path):
     print(ips)
     return ips
 
+
 def read_file(fname: str, key_path: str = ''):
     if not os.path.isfile(fname):
         return '{} does not exist.'.format(fname)
@@ -57,10 +60,12 @@ def read_file(fname: str, key_path: str = ''):
         return ips
     return hips
 
+
 def check_updates(hips: list, fname: str):
     if hips == read_file(fname):
         return True
     return False
+
 
 def auto_commit(hips: list, branch: str,
                 repo_path: str, computer_name: str,
@@ -68,15 +73,15 @@ def auto_commit(hips: list, branch: str,
     fname = computer_name + '.txt'
     if check_updates(hips, fname):
         return None
-    with open(fname, 'w+') as f:
-        f.write(str(hips))
-    f.close()
     g = git.Git(repo_path)
     if not check_branch(branch, g, force):
         return 'branch {} does not exist'.format(branch)
     repo = git.Repo(repo_path)
     for remote in repo.remotes:
         remote.fetch()
+    with open(fname, 'w+') as f:
+        f.write(str(hips))
+    f.close()
     commit_message = 'Hashed IPs updated from {}'.format(computer_name)
     g.add(fname)
     g.commit(m=commit_message)

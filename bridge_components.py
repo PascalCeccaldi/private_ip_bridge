@@ -77,9 +77,10 @@ def check_branch(branch: str, g: git.Git, force: bool = False):
             print('To force branch creation please use the following:')
             print('python main.py your_branch --force True')
             return False
-        g.checkout('HEAD', b=branch) 
+        g.checkout('HEAD', b=branch)
+        return 1
     g.checkout(branch)
-    return True
+    return 2
 
 
 def auto_commit(hips: list, branch: str,
@@ -88,21 +89,22 @@ def auto_commit(hips: list, branch: str,
     fname = computer_name + '.txt'
     if check_updates(hips, fname):
         return None
-    g = git.Git(repo_path)
-    if not check_branch(branch, g, force):
-        return 'branch {} does not exist'.format(branch)
     repo = git.Repo(repo_path)
     for remote in repo.remotes:
         remote.fetch()
-    o = repo.remotes.origin
-    o.pull(branch)
+    g = git.Git(repo_path)
+    exists =  check_branch(branch, g, force)
+    if not exists:
+        return 'branch {} does not exist'.format(branch)
+    if exists > 1:
+        o = repo.remotes.origin
+        o.pull(branch)
     with open(fname, 'w+') as f:
         f.write(str(hips))
     f.close()
     commit_message = 'Hashed IPs updated from {}'.format(computer_name)
     g.add(fname)
     g.commit(m=commit_message)
-
     repo.git.push('--set-upstream', 'origin', branch)
     return commit_message
 
@@ -112,13 +114,15 @@ def decode_computer_ips(key_path: str, branch: str,
                         force: bool = False):
 
     g = git.Git(repo_path)
-    if not check_branch(branch, g, force):
-        return 'branch {} does not exist'.format(branch)
     repo = git.Repo(repo_path)
     for remote in repo.remotes:
         remote.fetch()
-    o = repo.remotes.origin
-    o.pull(branch)
+    exists = check_branch(branch, g, force)
+    if not exists:
+        return 'branch {} does not exist'.format(branch)
+    if exists > 1:
+        o = repo.remotes.origin
+        o.pull(branch)
     fname = computer_name + '.txt'
     return read_file(fname, key_path)
 

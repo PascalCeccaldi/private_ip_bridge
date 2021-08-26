@@ -1,0 +1,15 @@
+<html>
+    <body>
+
+        <h1>Hello World!</h1>
+        
+        <form action="/access_ips" method="post">
+            <button type="submit">Get remote IPs</button>
+        </form>
+
+        <div>{{ ips }}</div>
+
+        <a href="{{url_for('index')}}"> back to index </a>
+
+    </body>
+</html>

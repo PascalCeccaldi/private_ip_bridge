@@ -1,0 +1,31 @@
+<html>
+
+    <body>
+        
+        <h1>Hello World!</h1>
+        
+        <form action="/get_ips" method="post">
+            <button type="submit">Get your IPs</button>
+        </form>
+
+
+        <form action="/get_hashed_ips" method="post">
+            <button type="submit">Get your hashed IPs</button>
+        </form>
+
+        <div>{{ ips }}</div>
+        <div>{{ hips }}</div>
+
+        <form action="/decode_hips" method="post">
+            <input id="hips" name="hips" value="{{ hips }}">
+            <button type="submit">Decode your IPs</button>
+        </form>
+
+        <form action="/continous_push" method="post">
+            <button type="submit">Launch continous push</button>
+        </form>
+
+        <a href="{{url_for('index')}}"> back to index </a>
+
+    </body>
+</html>

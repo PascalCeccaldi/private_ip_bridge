@@ -46,7 +46,7 @@ def check_branch(branch: str, g: git.Git, force: bool = False):
             print('Last action will be ignored due to warning.')
             print('Please create your branch manually or use -f option')
             print('To force branch creation please use the following:')
-            print('python main.py -f your_branch')
+            print('python main.py your_branch --force True')
             return False
         g.checkout('HEAD', b=branch) 
     g.checkout(branch)
@@ -119,7 +119,8 @@ def ip_listener(freq: int = 60,
                 key_path: str = '',
                 branch: str = 'tmp',
                 repo_path: str = '',
-                computer_name: str = "Al"):
+                computer_name: str = "Al",
+                force: bool = False):
     
     print('Bot Listening to your ip..')
     print('To quit, press CTRL+C')
@@ -138,7 +139,8 @@ def ip_listener(freq: int = 60,
                 hashed_ips = hash_ips(current_ips, key_path)
                 if len(repo_path):
                     auto_commit(hashed_ips, branch,
-                                repo_path, computer_name)
+                                repo_path, computer_name,
+                                force=force)
             old_ips = current_ips
             if oneshot:
                 return hashed_ips if len(key_path) else current_ips

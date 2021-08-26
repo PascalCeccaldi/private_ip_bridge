@@ -27,13 +27,15 @@ def decode_hips():
 def hips_push():
     ips = str(ip_listener(60, oneshot=True, key_path=key_p,
                           branch=your_branch, repo_path=repo_p,
-                          computer_name=computer_n))
+                          computer_name=computer_n,
+                          force=force))
     return render_template('push_local_ips.html')
 
 @app.route('/continuous_hips_push', methods=['POST'])
 def continuous_hips_push():
     ips = str(ip_listener(60, key_path=key_p, branch=your_branch,
-                          repo_path=repo_p, computer_name=computer_n))
+                          repo_path=repo_p, computer_name=computer_n,
+                          force=force))
     return render_template('push_local_ips.html')
 
 @app.route('/access_ips', methods=['POST'])
@@ -66,10 +68,13 @@ if __name__ == '__main__':
                         default='.')
     parser.add_argument('--computer-name', type=str,
                         default='Al')
+    parser.add_argument('--force',type=bool,
+                        default=False)
     args = parser.parse_args()
     
     your_branch = args.your_branch
     key_p = args.public_key_path
     repo_p = args.repository_path
     computer_n = args.computer_name
+    force = args.force
     app.run(host='127.0.0.1', port=8000, debug=True)

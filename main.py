@@ -25,12 +25,14 @@ def decode_hips():
 
 @app.route('/hips_push', methods=['POST'])
 def hips_push():
-    ips = str(ip_listener(60, oneshot=True, key_path=key_p, repo_path=repo_p))
+    ips = str(ip_listener(60, oneshot=True, key_path=key_p,
+                          repo_path=repo_p, computer_name=computer_n))
     return render_template('push_local_ips.html')
 
 @app.route('/continuous_hips_push', methods=['POST'])
 def continuous_hips_push():
-    ips = str(ip_listener(60, key_path=key_p, repo_path=repo_p))
+    ips = str(ip_listener(60, key_path=key_p,
+                          repo_path=repo_p, computer_name=computer_n))
     return render_template('push_local_ips.html')
 
 @app.route('/access_ips', methods=['POST'])

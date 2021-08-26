@@ -20,7 +20,7 @@ def fetch_ips(current_ips):
     return global_ip + local_ip
 
 
-def auto_commit(hips: str, repo: git.Repo, computer_name: str = "Al"):
+def auto_commit(hips: str, repo: git.Repo, computer_name: str):
     fname = computer_name + '.txt'
     with open(fname, 'w+') as f:
         f.write(str(hips))
@@ -91,7 +91,8 @@ def ip_decoder(hashes, key_path):
 def ip_listener(freq: int = 60,
                 oneshot: bool = False,
                 key_path: str = '',
-                repo_path: str = ''):
+                repo_path: str = '',
+                computer_name: str = "Al"):
     
     print('Bot Listening to your ip..')
     print('To quit, press CTRL+C')
@@ -111,7 +112,7 @@ def ip_listener(freq: int = 60,
             if len(key_path):
                 hashed_ips = hash_ips(current_ips, key_path)
                 if len(repo_path):
-                    auto_commit(hashed_ips, repo)
+                    auto_commit(hashed_ips, repo, computer_name)
             old_ips = current_ips
             if oneshot:
                 return hashed_ips if len(key_path) else current_ips

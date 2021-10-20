@@ -3,8 +3,7 @@
 Retrive your remote machine's IP from everywhere securely.
 
 ## Philosophy
-
-.. image:: ../design.png
+![alt text](https://github.com/PascalCeccaldi/private_ip_bridge/blob/pc/computers/design.jpeg)
 
 ## Installation
 

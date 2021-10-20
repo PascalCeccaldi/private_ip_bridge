@@ -1,0 +1,39 @@
+name: private
+channels:
+  - defaults
+dependencies:
+  - ca-certificates=2021.9.30=hecd8cb5_1
+  - certifi=2021.10.8=py37hecd8cb5_0
+  - libcxx=12.0.0=h2f01273_0
+  - libedit=3.1.20210714=h9ed2024_0
+  - libffi=3.2.1=h0a44026_1007
+  - ncurses=6.2=h0a44026_1
+  - openssl=1.1.1l=h9ed2024_0
+  - pip=21.2.2=py37hecd8cb5_0
+  - python=3.7.1=haf84260_7
+  - readline=7.0=h1de35cc_5
+  - setuptools=58.0.4=py37hecd8cb5_0
+  - sqlite=3.33.0=hffcf06c_0
+  - tk=8.6.11=h7bc2e8c_0
+  - wheel=0.37.0=pyhd3eb1b0_1
+  - xz=5.2.5=h1de35cc_0
+  - zlib=1.2.11=h1de35cc_3
+  - pip:
+    - charset-normalizer==2.0.7
+    - click==8.0.3
+    - flask==2.0.2
+    - gitdb==4.0.7
+    - gitpython==3.1.24
+    - idna==3.3
+    - importlib-metadata==4.8.1
+    - itsdangerous==2.0.1
+    - jinja2==3.0.2
+    - markupsafe==2.0.1
+    - requests==2.26.0
+    - send2trash==1.8.0
+    - smmap==4.0.0
+    - typing-extensions==3.10.0.2
+    - urllib3==1.26.7
+    - werkzeug==2.0.2
+    - zipp==3.6.0
+prefix: /Users/pascalceccaldi/.miniconda/envs/private

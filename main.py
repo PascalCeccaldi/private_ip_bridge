@@ -56,7 +56,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('your_branch', type=str)
     parser.add_argument('--public-key-path', type=str,
-                        default="/Users/pascalceccaldi/.ssh/id_rsa_ips.pub")
+                        default="~.ssh/id_rsa.pub")
     parser.add_argument('--repository-path', type=str,
                         default='.')
     parser.add_argument('--computer-name', type=str,

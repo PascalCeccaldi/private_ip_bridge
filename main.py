@@ -69,15 +69,13 @@ if __name__ == '__main__':
                         default=60)
     args = parser.parse_args()
     
-    your_branch = args.your_branch
-    key_p = args.public_key_path
-    repo_p = args.repository_path
-    computer_n = args.computer_name
-    force = args.force
-    freq = args.update_freq
     if args.background:
-        ip_listener(freq, key_path=key_p, branch=your_branch,
-                    repo_path=repo_p, computer_name=computer_n,
-                    force=force, bg=True)
+        ip_listener(args.update_freq,
+                    key_path=args.public_key_path,
+                    branch=args.your_branch,
+                    repo_path=args.repository_path,
+                    computer_name=args.computer_name,
+                    force=args.force,
+                    bg=True)
     else:
         app.run(host='127.0.0.1', port=8000, debug=True)

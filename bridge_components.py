@@ -7,6 +7,7 @@ import datetime
 from git.objects import commit
 import requests
 import os.path
+from os import system as sys
 
 
 def fetch_ips(current_ips):    
@@ -91,8 +92,10 @@ def auto_commit(hips: list, branch: str,
         return None
     repo = git.Repo(repo_path)
     g = git.Git(repo_path)
+    
     for remote in repo.remotes:
         exists =  check_branch(branch, remote, force)
+
     if not exists:
         return 'branch {} does not exist'.format(branch)
     if exists > 1:
@@ -118,7 +121,6 @@ def decode_computer_ips(key_path: str, branch: str,
 
     g = git.Git(repo_path)
     repo = git.Repo(repo_path)
-    
 
     for remote in repo.remotes:
         exists =  check_branch(branch, remote, force)

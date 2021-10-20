@@ -58,7 +58,7 @@ You can specify a passphrase by using **--public-key-path**:
 
 `python main.py your_branch_name --public-key-path path_to_passphrase`
 
-**IMPORTANT: this passphrase needs to be accesible on all computers from where you which do cypher/decypher your IPs.**
+**IMPORTANT: this passphrase needs to be accesible on all computers from where you wish to cypher/decypher your IPs.**
 
 ## Read IPs
 
